@@ -96,7 +96,7 @@ export default function Results(props) {
       .catch(({ message }) => {
         dispatch({ type: "setError", payload: { error: message } });
       });
-  }, []);
+  }, [playerOne, playerTwo]);
   const { winner, loser, error, loading } = state;
 
   if (loading === true) {
