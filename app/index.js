@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { ThemeContext } from "./contexts/theme";
@@ -10,8 +10,8 @@ const Popular = React.lazy(() => import("./components/Popular"));
 const Battle = React.lazy(() => import("./components/Battle"));
 const Results = React.lazy(() => import("./components/Results"));
 
-class App extends React.Component {
-  state = {
+function App() {
+  const initialState = {
     theme: "light",
     toggleTheme: () => {
       this.setState(({ theme }) => ({
@@ -19,28 +19,27 @@ class App extends React.Component {
       }));
     }
   };
-  render() {
-    return (
-      <Router>
-        <ThemeContext.Provider value={this.state}>
-          <div className={this.state.theme}>
-            <div className="container">
-              <Nav />
+  const [state, setState] = useState(initialState);
+  return (
+    <Router>
+      <ThemeContext.Provider value={state}>
+        <div className={state.theme}>
+          <div className="container">
+            <Nav />
 
-              <React.Suspense fallback={<Loading />}>
-                <Switch>
-                  <Route exact path="/" component={Popular} />
-                  <Route exact path="/battle" component={Battle} />
-                  <Route path="/battle/results" component={Results} />
-                  <Route render={() => <h1>404</h1>} />
-                </Switch>
-              </React.Suspense>
-            </div>
+            <React.Suspense fallback={<Loading />}>
+              <Switch>
+                <Route exact path="/" component={Popular} />
+                <Route exact path="/battle" component={Battle} />
+                <Route path="/battle/results" component={Results} />
+                <Route render={() => <h1>404</h1>} />
+              </Switch>
+            </React.Suspense>
           </div>
-        </ThemeContext.Provider>
-      </Router>
-    );
-  }
+        </div>
+      </ThemeContext.Provider>
+    </Router>
+  );
 }
 
 ReactDOM.render(<App />, document.getElementById("app"));
