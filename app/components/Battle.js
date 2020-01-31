@@ -11,7 +11,7 @@ import { ThemeContext } from "../contexts/theme";
 import { Link } from "react-router-dom";
 
 function Instructions() {
-  const { theme } = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <div className="instructions-container">
       <h1 className="center-text header-lg">Instructions</h1>
@@ -53,7 +53,7 @@ function PlayerInput(props) {
     setUsername(event.target.value);
   };
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <form className="column player" onSubmit={handleSubmit}>
       <label htmlFor="username" className="player-label">
@@ -87,7 +87,7 @@ PlayerInput.propTypes = {
 };
 
 function PlayerPreview({ username, onReset, label }) {
-  const { theme } = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <div className="column player">
       <h3 className="player-label">{label}</h3>

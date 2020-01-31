@@ -6,8 +6,9 @@ const activeStyle = {
   color: "rgb(187, 46, 31)"
 };
 
-export default function Nav() {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+export default function Nav(props) {
+  const theme = useContext(ThemeContext);
+  const { toggleTheme } = props;
   return (
     <nav className="row space-between">
       <ul className="row nav">

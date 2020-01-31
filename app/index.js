@@ -11,21 +11,17 @@ const Battle = React.lazy(() => import("./components/Battle"));
 const Results = React.lazy(() => import("./components/Results"));
 
 function App() {
-  const initialState = {
-    theme: "light",
-    toggleTheme: () => {
-      this.setState(({ theme }) => ({
-        theme: theme === "light" ? "dark" : "light"
-      }));
-    }
+  const [theme, setTheme] = useState("light");
+  const toggleTheme = () => {
+    setTheme(value => (value === "light" ? "dark" : "light"));
   };
-  const [state, setState] = useState(initialState);
+
   return (
     <Router>
-      <ThemeContext.Provider value={state}>
-        <div className={state.theme}>
+      <ThemeContext.Provider value={theme}>
+        <div className={theme}>
           <div className="container">
-            <Nav />
+            <Nav toggleTheme={toggleTheme} />
 
             <React.Suspense fallback={<Loading />}>
               <Switch>
