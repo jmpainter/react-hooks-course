@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { fetchPopularRepos } from "../utils/api";
 import {
@@ -92,19 +92,10 @@ ReposGrid.propTypes = {
 
 function popularReducer(state, action) {
   switch (action.type) {
-    case "setLanguage":
+    case "setRepos":
       return {
         ...state,
-        selectedLanguage: action.payload,
-        error: null
-      };
-    case "setRepo":
-      return {
-        ...state,
-        repos: {
-          ...state.repos,
-          [state.selectedLanguage]: action.payload
-        }
+        [action.selectedLanguage]: action.data
       };
     case "setError":
       return {
@@ -117,24 +108,23 @@ function popularReducer(state, action) {
 }
 
 const initialState = {
-  selectedLanguage: "All",
-  repos: {},
   error: null
 };
 
 export default function Popular() {
+  const [selectedLanguage, setSelectedLanguage] = useState("All");
+
   const [state, dispatch] = useReducer(popularReducer, initialState);
+
+  const fetchedLanguages = useRef([]);
+
   useEffect(() => {
-    updateLanguage(state.selectedLanguage);
-  }, []);
+    if (fetchedLanguages.current.includes(selectedLanguage) === false) {
+      fetchedLanguages.current.push(selectedLanguage);
 
-  const updateLanguage = selectedLanguage => {
-    dispatch({ type: "setLanguage", payload: selectedLanguage });
-
-    if (!state.repos[selectedLanguage]) {
       fetchPopularRepos(selectedLanguage)
         .then(data => {
-          dispatch({ type: "setRepo", payload: data });
+          dispatch({ type: "setRepos", selectedLanguage, data });
         })
         .catch(() => {
           dispatch({
@@ -144,15 +134,17 @@ export default function Popular() {
           console.warn("Error fetching repos: ", error);
         });
     }
+  }, [fetchedLanguages, selectedLanguage]);
+
+  const updateLanguage = selectedLanguage => {
+    setSelectedLanguage(selectedLanguage);
   };
 
   const isLoading = () => {
-    const { selectedLanguage, repos, error } = state;
-
-    return !repos[selectedLanguage] && error === null;
+    return !state[selectedLanguage] && error === null;
   };
 
-  const { selectedLanguage, repos, error } = state;
+  const { error } = state;
 
   return (
     <React.Fragment>
@@ -165,7 +157,7 @@ export default function Popular() {
 
       {error && <p className="center-text error">{error}</p>}
 
-      {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
+      {state[selectedLanguage] && <ReposGrid repos={state[selectedLanguage]} />}
     </React.Fragment>
   );
 }

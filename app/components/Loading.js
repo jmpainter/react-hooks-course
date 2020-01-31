@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const styles = {
@@ -12,30 +12,22 @@ const styles = {
   }
 };
 
-export default function Loading(props) {
-  const [content, setContent] = useState(props.text);
-
-  const id = useRef();
+export default function Loading({ text = "Loading", speed = 300 }) {
+  const [content, setContent] = useState(text);
 
   useEffect(() => {
-    const { speed, text } = props;
-    id.current = window.setInterval(() => {
+    const id = window.setInterval(() => {
       console.log(content);
       content === text + "..."
         ? setContent(text)
         : setContent(value => value + ".");
     }, speed);
-    return () => window.clearInterval(id.current);
-  }, []);
+    return () => window.clearInterval(id);
+  }, [text, speed]);
   return <p style={styles.content}>{content}</p>;
 }
 
 Loading.propTypes = {
-  text: PropTypes.string.isRequired,
-  speed: PropTypes.number.isRequired
-};
-
-Loading.defaultProps = {
-  text: "Loading",
-  speed: 300
+  text: PropTypes.string,
+  speed: PropTypes.number
 };
